@@ -35,16 +35,13 @@ RUN rake install
 # --->
 
 RUN mkdir .ssh
-COPY private_key.pem /root/.ssh/
-RUN chmod 600 /root/.ssh/private_key.pem
-COPY config /root/.ssh/
 
 
 # --->
 # ---> Configure the git installation.
 # --->
 
-RUN git config --global user.email "apollo@somewhere.com" && \
+RUN git config --global user.email "apolloakora@gmail.com" && \
     git config --global user.name "Apollo Akora"
 
 
