@@ -56,7 +56,7 @@ WORKDIR /var/opt/migrator
 # --->
 
 RUN mkdir .ssh && mkdir data && mkdir configuration
-
+RUN chown -R migrator:migrator ~/.ssh
 
 # --->
 # ---> Configure the git installation.
