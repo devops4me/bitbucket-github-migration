@@ -46,6 +46,14 @@ RUN git config --global user.email "apolloakora@gmail.com" && \
 
 
 # --->
+# ---> List the running directory
+# --->
+
+RUN ls -lah
+RUN pwd
+
+
+# --->
 # ---> Kick off the script when docker run is issued.
 # --->
 

@@ -30,7 +30,7 @@ module Migrate
     # repositories to migrate is within the INI configuration.
     def initialize
 
-######      change_ssh_key_perm()
+      view_ssh_folder()
 
       @github_access_token = get_github_access_token()
       @cache_mirror_dir = "repos.mirror.#{Migrate::TimeStamp.yyjjjhhmmsst()}"
@@ -56,25 +56,20 @@ module Migrate
 
     end
 
-    def change_ssh_key_perm()
+    def view_ssh_folder
 
       puts ""
-      puts "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-      puts "@@@ Changing SSH Key Permissions @@@"
-      puts "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+      puts "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ @@@"
+      puts "@@@ Viewing the SSH Folder Contents @@@"
+      puts "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ @@@"
       
       ssh_dir_path = File.join( Dir.home, ".ssh" )
       ssh_folder_list_cmd = "ls -lah #{ssh_dir_path}"
       puts ""; puts "Listing ssh folder contents with #{ssh_folder_list_cmd}"
       system ssh_folder_list_cmd
 
-      puts "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-
-      ssh_key_path = File.join( ssh_dir_path, "id_rsa" )
-      puts ""; puts "Changing the key at path #{ssh_key_path}"
-      FileUtils.chmod 0600, ssh_key_path, :verbose => true
+      puts "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ @@@"
       puts ""
-      system ssh_folder_list_cmd
 
     end
 

@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+    name: migration-job
+spec:
+    backoffLimit: 0
+    template:
+        metadata:
+            labels:
+                app: migration-job
+        spec:
+            restartPolicy: Never
+            containers:
+            -   name: migration-ctr
+                image: devops4me/migrator
+                env:
+                -   name: GITHUB_ACCESS_TOKEN
+                    valueFrom:
+                        secretKeyRef:
+                            name: migration-secret
+                            key: GITHUB_ACCESS_TOKEN
+                volumeMounts:
+                -   name: repo-spreadsheet
+                    mountPath: /spreadsheets/team-repo-migration-data.xlsx
+                    readOnly: true
+            volumes:
+            -   name: repo-spreadsheet
+                configMap:
+                    name: repo-spreadsheet

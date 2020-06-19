@@ -1,8 +1,4 @@
-puts "loading the cli file"
-
-puts "About to require thor"
 require "thor"
-puts "about to require the version file"
 require "version"
 
 require "model/config"

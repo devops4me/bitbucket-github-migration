@@ -26,7 +26,7 @@ module Migrate
     def do
 
       conf = Migrate::Config.new()
-      clone_dir_path = File.join( Dir.home, conf.cache_mirror_dir )
+      clone_dir_path = File.join( Dir.pwd, conf.cache_mirror_dir )
       Dir.mkdir( clone_dir_path )
 
       conf.repositories.each do |repo|
