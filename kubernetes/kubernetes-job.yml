@@ -15,10 +15,10 @@ spec:
                 image: devops4me/migrator
                 volumeMounts:
                 -   name: migrate-config
-                    mountPath: /var/opt/migrator/migrate-configuration.ini
+                    mountPath: /var/opt/migrator/configuration
                     readOnly: true
                 -   name: repo-spreadsheet
-                    mountPath: /var/opt/migrator/data/team-repo-migration-data.xlsx
+                    mountPath: /var/opt/migrator/data
                     readOnly: true
             volumes:
             -   name: migrate-config

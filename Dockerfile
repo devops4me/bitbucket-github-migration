@@ -55,7 +55,7 @@ WORKDIR /var/opt/migrator
 # ---> bitbucket repositories.
 # --->
 
-RUN mkdir .ssh && mkdir data
+RUN mkdir .ssh && mkdir data && mkdir configuration
 
 
 # --->

@@ -10,7 +10,7 @@ module Migrate
   # that are required to fuel the migration.
   class Config
 
-    DEFAULT_CONFIGURATION_FILE="migrate-configuration.ini"
+    DEFAULT_CONFIGURATION_FILE="configuration/migrate-configuration.ini"
     MIGRATION_CONFIGURATION_FILE="MIGRATION_CONFIGURATION_FILE"
 
     attr_reader :bitbucket_host, :bitbucket_port
@@ -32,6 +32,7 @@ module Migrate
 
       view_ssh_folder()
       view_data_folder()
+      view_configuration_folder()
       view_home_folder()
 
       @cache_mirror_dir = "repos.mirror.#{Migrate::TimeStamp.yyjjjhhmmsst()}"
@@ -88,6 +89,21 @@ module Migrate
     end
 
 
+    def view_configuration_folder
+
+      puts ""
+      puts "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ @@@"
+      puts "@@@ Viewing the configuration Folder Contents @@@"
+      puts "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ @@@"
+      
+      configuration_dir_path = File.join( Dir.home, "configuration" )
+      configuration_folder_list_cmd = "ls -lah #{configuration_dir_path}"
+      puts ""; puts "Listing configuration folder contents with #{configuration_folder_list_cmd}"
+      system configuration_folder_list_cmd
+
+    end
+
+
     def view_home_folder
 
       puts ""
@@ -136,7 +152,6 @@ module Migrate
       raise ArgumentError.new( "No filepath configured for the migration spreadsheet." ) if @sheet_filepath.nil?
 
       sheet_full_path = File.join( Dir.home, @sheet_filepath )
-#########      sheet_full_path = ::File.absolute_path( @sheet_filepath )
       sheet_exists = File.exist?( sheet_full_path ) && File.file?( sheet_full_path )
       raise ArgumentError.new( "Spreadsheet #{@sheet_filepath} [#{sheet_full_path}] was not found." ) unless sheet_exists
 
