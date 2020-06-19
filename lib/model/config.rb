@@ -102,7 +102,9 @@ module Migrate
     def read_spreadsheet_data()
 
       raise ArgumentError.new( "No filepath configured for the migration spreadsheet." ) if @sheet_filepath.nil?
-      sheet_full_path = ::File.absolute_path( @sheet_filepath )
+
+      sheet_full_path = File.join( Dir.home, @sheet_filepath )
+#########      sheet_full_path = ::File.absolute_path( @sheet_filepath )
       sheet_exists = File.exist?( sheet_full_path ) && File.file?( sheet_full_path )
       raise ArgumentError.new( "Spreadsheet #{@sheet_filepath} [#{sheet_full_path}] was not found." ) unless sheet_exists
 
