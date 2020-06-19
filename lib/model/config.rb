@@ -32,7 +32,6 @@ module Migrate
 
       view_ssh_folder()
 
-      @github_access_token = get_github_access_token()
       @cache_mirror_dir = "repos.mirror.#{Migrate::TimeStamp.yyjjjhhmmsst()}"
       @cache_backup_dir = "repos.backup.#{Migrate::TimeStamp.yyjjjhhmmsst()}"
 
@@ -45,6 +44,7 @@ module Migrate
       @config_data.use( "destination" )
       @github_separator = @config_data.get( "github.separator" )
       @github_username = @config_data.get( "github.username" )
+      @github_access_token = @config_data.get( "github.access.token" )
 
       @config_data.use( "spreadsheet" )
       @sheet_filepath = @config_data.get( "sheet.filepath" )
@@ -81,27 +81,13 @@ module Migrate
     #     or no file can be found at the specified path.
     def read_configuration_data()
 
-      migration_filepath = DEFAULT_CONFIGURATION_FILE unless ENV.has_key?( MIGRATION_CONFIGURATION_FILE )
+      default_conf_path = File.join( Dir.home, DEFAULT_CONFIGURATION_FILE )
+      migration_filepath = default_conf_path unless ENV.has_key?( MIGRATION_CONFIGURATION_FILE )
       migration_filepath = ENV[ MIGRATION_CONFIGURATION_FILE ] if ENV.has_key?( MIGRATION_CONFIGURATION_FILE )
 
       @config_data = Migrate::DataMap.new( migration_filepath )
 
     end
-
-
-
-    # Get the github access token from the GITHUB_ACCESS_TOKEN environment
-    # variable.
-    #
-    # @raise ArgumentError if the environment variable does not exist.
-    def get_github_access_token()
-
-      env_error_msg = "No environment variable called GITHUB_ACCESS_TOKEN was found."
-      raise ArgumentError.new env_error_msg unless ENV.has_key?( "GITHUB_ACCESS_TOKEN" )
-      return ENV[ "GITHUB_ACCESS_TOKEN" ]
-
-    end
-
 
 
 
