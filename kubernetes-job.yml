@@ -17,23 +17,26 @@ spec:
                 -   name: migrate-config
                     mountPath: /var/opt/migrator/configuration
                     readOnly: true
-                -   name: repo-spreadsheet
+                -   name: spreadsheet-key
                     mountPath: /var/opt/migrator/data
-                    readOnly: true
-                -   name: ssh-mount-files
-                    mountPath: /var/opt/migrator/.ssh
+                -   name: ssh-config-file
+                    mountPath: /var/opt/migrator/.ssh/config
+                    subPath: config
             volumes:
             -   name: migrate-config
                 secret:
                     secretName: migration-config
-            -   name: repo-spreadsheet
+            -   name: spreadsheet-key
                 secret:
-                    secretName: migration-spreadsheet
-            -   name: ssh-mount-files
-                secret:
-                    secretName: migration-sshfiles
+                    secretName: migration-sheetkey
                     items:
-                    -   key: ssh-config
-                        path: config
+                    -   key: spreadsheet
+                        path: team-repo-migration-data.xlsx
                     -   key: ssh-key
                         path: bitbucket-private-key.pem
+            -   name: ssh-config-file
+                secret:
+                    secretName: migration-sshconfig
+                    items:
+                    -   key: sshconfigkey
+                        path: config

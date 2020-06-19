@@ -111,9 +111,9 @@ You are ready once you have a kubernetes cluster and you have satisfied the scri
 ### Create 3 Secret Volume Mappings - then Run the Job
 
 ```
-kubectl create secret generic migration-config --from-file=<PATH_TO_INI_FILE>
-kubectl create secret generic migration-spreadsheet --from-file=<PATH_TO_SPREADSHEET>
-kubectl create secret generic migration-sshfiles --from-file=ssh-config=config --from-file=ssh-key=bitbucket-private-key.pem
+kubectl create secret generic migration-config --from-file=migrate-configuration.ini
+kubectl create secret generic migration-sheetkey --from-file=spreadsheet=team-repo-migration-data.xlsx --from-file=ssh-key=bitbucket-private-key.pem
+kubectl create secret generic migration-sshconfig --from-file=sshconfigkey=config
 kubectl create -f kubernetes-job.yml
 ```
 
