@@ -1,10 +1,6 @@
 require "thor"
 require "version"
 
-puts "Using new software line"
-puts "Using new software line"
-puts "Using new software line"
-
 require "model/config"
 require "controller/do"
 require "controller/delete"

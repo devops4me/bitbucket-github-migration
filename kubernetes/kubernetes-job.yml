@@ -13,12 +13,6 @@ spec:
             containers:
             -   name: migration-ctr
                 image: devops4me/migrator
-                env:
-                -   name: GITHUB_ACCESS_TOKEN
-                    valueFrom:
-                        secretKeyRef:
-                            name: migration-secret
-                            key: GITHUB_ACCESS_TOKEN
                 volumeMounts:
                 -   name: migrate-config
                     mountPath: /var/opt/migrator/migrate-configuration.ini
@@ -31,5 +25,5 @@ spec:
                 secret:
                     secretName: migration-config
             -   name: repo-spreadsheet
-                configMap:
-                    name: migration-spreadsheet
+                secret:
+                    secretName: migration-spreadsheet

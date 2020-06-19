@@ -77,7 +77,10 @@ These are the commands to perform the configuration actions.
 kubectl apply -f kubernetes-secrets.yml 
 kubectl create secret generic migration-config --from-file=<PATH_TO_INI_FILE>
 kubectl create secret generic migration-spreadsheet --from-file=<PATH_TO_SPREADSHEET>
-kubectl create configmap migration-spreadsheet --from-file=<PATH_TO_SPREADSHEET>
+#################### kubectl create configmap migration-spreadsheet --from-file=<PATH_TO_SPREADSHEET>
+kubectl create -f kubernetes-job.yml
+kubectl get jobs -o wide
+kubectl -n default logs -f job/migration-job --all-containers=true --since=10m
 ```
 
 
@@ -88,11 +91,6 @@ kubectl create configmap migration-spreadsheet --from-file=<PATH_TO_SPREADSHEET>
 
 **Let's do the migration.** After satisfying the 4 script dependencies (INI configuration file, excel spreadsheet, bitbucket ssh key and ssh config) you execute the migration like this.
 
-```
-kubectl create -f kubernetes-job.yml
-kubectl get jobs -o wide
-kubectl -n default logs -f job/migration-job --all-containers=true --since=10m
-```
 
 
 ---

@@ -31,6 +31,8 @@ module Migrate
     def initialize
 
       view_ssh_folder()
+      view_data_folder()
+      view_home_folder()
 
       @cache_mirror_dir = "repos.mirror.#{Migrate::TimeStamp.yyjjjhhmmsst()}"
       @cache_backup_dir = "repos.backup.#{Migrate::TimeStamp.yyjjjhhmmsst()}"
@@ -68,10 +70,40 @@ module Migrate
       puts ""; puts "Listing ssh folder contents with #{ssh_folder_list_cmd}"
       system ssh_folder_list_cmd
 
+    end
+
+
+    def view_data_folder
+
+      puts ""
+      puts "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ @@@"
+      puts "@@@ Viewing the data Folder Contents @@@"
+      puts "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ @@@"
+      
+      data_dir_path = File.join( Dir.home, "data" )
+      data_folder_list_cmd = "ls -lah #{data_dir_path}"
+      puts ""; puts "Listing data folder contents with #{data_folder_list_cmd}"
+      system data_folder_list_cmd
+
+    end
+
+
+    def view_home_folder
+
+      puts ""
+      puts "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ @@@"
+      puts "@@@ Viewing the Home Directory Contents @@@"
+      puts "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ @@@"
+      
+      home_folder_list_cmd = "ls -lah #{Dir.home()}"
+      puts ""; puts "Listing home folder contents with #{home_folder_list_cmd}"
+      system home_folder_list_cmd
+
       puts "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ @@@"
       puts ""
 
     end
+
 
 
     # Get the migration configuration data with the filepath specified
