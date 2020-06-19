@@ -8,7 +8,6 @@ You can choose a **Kubernetes Job** to run your migration workload. This option 
 The advantages of running jobs and workloads inside Kubernetes are
 
 - kubernetes will restart the job if it fails - it may move it to different nodes
-- the team can see the results from log viewers like the ElasticSearch stack
 - you only need to create secrets once as opposed to every time you run the job
 
 
