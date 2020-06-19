@@ -31,7 +31,7 @@ spec:
                     secretName: migration-spreadsheet
             -   name: ssh-mount-files
                 secret:
-                    secretName: ssh-files
+                    secretName: migration-sshfiles
                     items:
                     -   key: ssh-config
                         path: config

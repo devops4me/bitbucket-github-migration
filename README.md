@@ -9,6 +9,7 @@ The advantages of running jobs and workloads inside Kubernetes are
 
 - kubernetes will restart the job if it fails - it may move it to different nodes
 - you only need to create secrets once as opposed to every time you run the job
+- multiple team members can run and monitor from Windows, MacOS and Linux
 
 
 Without further ado let's step up and perform the repository migration.
@@ -104,37 +105,41 @@ You are ready once you have a kubernetes cluster and you have satisfied the scri
 
 - **repositories spreadsheet** as a **`Kubernetes Secret`**
 - migration configuration **INI file** as a **`Kubernetes Secret`**
-- BitBucket **private SSH key** as a **`Kubernetes Secret`**
-- **SSH config** as a **`Kubernetes ConfigMap`** (variety is the spice of life)
+- BitBucket **private SSH key** as a **`Kubernetes Secret`** (together with)
+- the **SSH config** as another file in the same **`Kubernetes Secret`**
+
+### Create 3 Secret Volume Mappings - then Run the Job
 
 ```
 kubectl create secret generic migration-config --from-file=<PATH_TO_INI_FILE>
 kubectl create secret generic migration-spreadsheet --from-file=<PATH_TO_SPREADSHEET>
-
-kubectl create secret generic ssh-files --from-file=ssh-config=config --from-file=ssh-key=bitbucket-private-key.pem
-
-kubectl create secret generic migration-sshkey --from-file=<PATH_TO_PRIVATE_KEY_PEM>
-kubectl create configmap migration-sshconfig --from-file=<PATH_TO_PRIVATE_KEY_PEM>
+kubectl create secret generic migration-sshfiles --from-file=ssh-config=config --from-file=ssh-key=bitbucket-private-key.pem
 kubectl create -f kubernetes-job.yml
-kubectl get jobs -o wide
-kubectl logs -f job/migration-job
 ```
 
 
----
-
-
-## How to Migrate Repositories
-
-**Let's do the migration.** After satisfying the 4 script dependencies (INI configuration file, excel spreadsheet, bitbucket ssh key and ssh config) you execute the migration like this.
-
-
 
 ---
 
 
 
-## Common and Useful Kubernetes Commands
+## Step 5 | Run the Workload as a Kubernetes Job
+
+Don't worry about the logs. Kubernetes keeps the pod alive so we can retrieve the logs like this.
+
+```
+kubectl logs -f job/migration-job
+```
+
+Also visit the Github interface and assess the quality and quantity of the repository migration.
+
+
+
+---
+
+
+
+## Appendix A | Useful Migration Job Commands
 
 These commands will come in handy at some point.
 
@@ -142,14 +147,14 @@ These commands will come in handy at some point.
 kubectl describe job/migration-job
 kubectl describe secret/migration-spreadsheet
 kubectl describe secret/migration-config
-kubectl describe secret migration-sshkey
+kubectl describe secret migration-sshfiles
 kubectl get jobs -o wide
 kubectl get secrets
-kubectl get configmaps
 kubectl get pods -o wide
 kubectl delete job migration-job
 kubectl delete secret migration-config
-kubectl delete configmap migration-spreadsheet
+kubectl delete secret migration-spreadsheet
+kubectl delete secret migration-sshfiles
 ```
 
 
@@ -158,7 +163,7 @@ kubectl delete configmap migration-spreadsheet
 
 
 
-## Using Docker to Migrate Repositories from BitBucket to Github
+## Appendix B | Using Docker to Migrate Repositories
 
 Aside from a local development environment and a kubernetes workload we can also use docker to guarantee a consistent script environment for the migration.
 
