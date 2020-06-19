@@ -20,12 +20,33 @@ RUN gem install \
 
 
 # --->
+# ---> Update the packages within this machine and create a user
+# ---> to run the repository migration with minimal privileges.
+# --->
+
+RUN apt-get update && \
+    apt-get --assume-yes install -qq -o=Dpkg::Use-Pty=0 wget && \
+    adduser --home /var/opt/migrator --shell /bin/bash --gecos 'Link Checking User' migrator && \
+    install -d -m 755 -o migrator -g migrator /var/opt/migrator && \
+    usermod -a -G sudo migrator
+
+
+# --->
 # ---> Now copy this rubygems repository including the configs
 # ---> and then use rake to build and package the migrate gem.
 # --->
 
-COPY . .
-RUN rake install
+COPY . /var/opt/migrator/code
+RUN cd /var/opt/migrator/code && rake install && chown -R migrator:migrator /var/opt/migrator/*
+
+
+# --->
+# ---> Now switch to the lesser permissioned migrator user as
+# ---> it does not like to run with unnecessary privileges.
+# --->
+
+USER migrator
+WORKDIR /var/opt/migrator
 
 
 # --->
@@ -34,7 +55,7 @@ RUN rake install
 # ---> bitbucket repositories.
 # --->
 
-RUN mkdir .ssh
+RUN mkdir .ssh && mkdir data
 
 
 # --->
@@ -43,14 +64,6 @@ RUN mkdir .ssh
 
 RUN git config --global user.email "apolloakora@gmail.com" && \
     git config --global user.name "Apollo Akora"
-
-
-# --->
-# ---> List the running directory
-# --->
-
-RUN ls -lah
-RUN pwd
 
 
 # --->

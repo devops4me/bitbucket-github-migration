@@ -12,20 +12,45 @@ The advantages of running jobs and workloads inside Kubernetes are
 - you only need to create secrets once as opposed to every time you run the job
 
 
+Without further ado let's step up and perform the repository migration.
+
+
 ---
 
 
-## How to Migrate Repositories
+## Step 1 | Setup the Configuration File
 
-**Let's begin at the end.** After satisfying the 5 script dependencies (excel spreadsheet, INI configuration file, bitbucket ssh key, ssh config file and the github access token) you can execute the migration like this.
+The software expects that the main configuration file **will be**
+- in INI format
+- inside the home directory of the executing user
+- called **`migrate-configuration.ini`**
+
+### `~/migrate-configuration.ini`
 
 ```
-kubectl create -f kubernetes-job.yml
-kubectl get jobs -o wide
-kubectl -n default logs -f job/migration-job --all-containers=true --since=10m
+[source]
+bitbucket.host=bitbucket  # this must match the Host directive in ~/.ssh/config
+bitbucket.port=7999       # which port should the cloning use
+
+[destination]
+github.username=mygithubusername
+github.access.token=abcdef0123456789fedcba987654321
+github.separator=-
+
+[spreadsheet]
+sheet.filepath=data/team-repo-migration-data.xlsx
+sheet.column.repository.name="Repository Name"
+sheet.column.bitbucket.project="BitBucket Project Name"
+sheet.column.github.prefix="Github Repo Prefix"
 ```
 
+The filepath for the spreadsheet is relative to the home directory of the executing user.
 
+### Creating the Kubernetes Secret
+
+```
+kubectl create secret generic config-file --from-file=<PATH_TO_INI_FILE>
+```
 ---
 
 
@@ -45,6 +70,20 @@ Thesea are the commands to perform the configuration actions.
 ```
 kubectl apply -f kubernetes-secrets.yml 
 kubectl create configmap repo-spreadsheet --from-file=../spreadsheets/team-repo-migration-data.xlsx
+```
+
+
+---
+
+
+## How to Migrate Repositories
+
+**Let's do the migration.** After satisfying the 4 script dependencies (INI configuration file, excel spreadsheet, bitbucket ssh key and ssh config) you execute the migration like this.
+
+```
+kubectl create -f kubernetes-job.yml
+kubectl get jobs -o wide
+kubectl -n default logs -f job/migration-job --all-containers=true --since=10m
 ```
 
 
