@@ -17,6 +17,12 @@ Without further ado let's step up and perform the repository migration.
 
 ---
 
+## Step 1 | Setup the Migration Repositories Spreadsheet
+
+
+
+---
+
 
 ## Step 1 | Setup the Configuration File
 
@@ -49,7 +55,7 @@ The filepath for the spreadsheet is relative to the home directory of the execut
 ### Creating the Kubernetes Secret
 
 ```
-kubectl create secret generic config-file --from-file=<PATH_TO_INI_FILE>
+kubectl create secret generic migration-config --from-file=<PATH_TO_INI_FILE>
 ```
 ---
 
@@ -65,11 +71,13 @@ To configure the repository migration you will need to
 - set the SSH config file as a Kubernetes ConfigMap
 - set the migration configuration INI file as a Kubernetes ConfigMap
 
-Thesea are the commands to perform the configuration actions.
+These are the commands to perform the configuration actions.
 
 ```
 kubectl apply -f kubernetes-secrets.yml 
-kubectl create configmap repo-spreadsheet --from-file=../spreadsheets/team-repo-migration-data.xlsx
+kubectl create secret generic migration-config --from-file=<PATH_TO_INI_FILE>
+kubectl create secret generic migration-spreadsheet --from-file=<PATH_TO_SPREADSHEET>
+kubectl create configmap migration-spreadsheet --from-file=<PATH_TO_SPREADSHEET>
 ```
 
 
@@ -95,5 +103,11 @@ kubectl -n default logs -f job/migration-job --all-containers=true --since=10m
 These commands will come in handy at some point.
 
 ```
+kubectl get pods
+kubectl get secrets
+kubectl get configmaps
+kubectl get jobs
 kubectl delete job migration-job
+kubectl delete secret migration-config
+kubectl delete configmap migration-spreadsheet
 ```

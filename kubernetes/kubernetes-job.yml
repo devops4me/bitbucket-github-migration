@@ -20,10 +20,16 @@ spec:
                             name: migration-secret
                             key: GITHUB_ACCESS_TOKEN
                 volumeMounts:
+                -   name: migrate-config
+                    mountPath: /var/opt/migrator/migrate-configuration.ini
+                    readOnly: true
                 -   name: repo-spreadsheet
-                    mountPath: /spreadsheets/team-repo-migration-data.xlsx
+                    mountPath: /var/opt/migrator/data/team-repo-migration-data.xlsx
                     readOnly: true
             volumes:
+            -   name: migrate-config
+                secret:
+                    secretName: migration-config
             -   name: repo-spreadsheet
                 configMap:
-                    name: repo-spreadsheet
+                    name: migration-spreadsheet
