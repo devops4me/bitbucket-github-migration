@@ -12,7 +12,8 @@ spec:
             restartPolicy: Never
             containers:
             -   name: migration-ctr
-                image: devops4me/migrator
+                image: devops4me/migrator:latest
+                args: [ "delete" ]
                 volumeMounts:
                 -   name: migrate-config
                     mountPath: /var/opt/migrator/configuration
