@@ -67,7 +67,9 @@ RUN git config --global user.email "apolloakora@gmail.com" && \
 
 
 # --->
-# ---> Kick off the script when docker run is issued.
+# ---> Kick off the script to either do the migration or
+# ---> in reverse to delete the migrated repositories.
 # --->
 
-ENTRYPOINT [ "migrate", "do" ]
+ENTRYPOINT [ "migrate" ]
+CMD [ "do" ]
