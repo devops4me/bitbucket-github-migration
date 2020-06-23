@@ -35,7 +35,7 @@ module Migrate
         github_repository_name = "#{repo[:github_prefix]}#{conf.github_separator}#{repo[:repository_name]}"
 
         clone_repository( conf, repo, local_repo_path )
-        create_github_repo_if_not_exists( conf.github_access_token, github_repository_name )
+        create_github_repo_if_not_exists( conf, github_repository_name )
         set_origin_url( conf, repo, local_repo_path, github_repository_name )
         push_to_remote_origin( local_repo_path )
 
@@ -69,15 +69,15 @@ module Migrate
     end
 
 
-    def create_github_repo_if_not_exists( access_token, github_repo_name )
-        Github.create_repository( access_token, github_repo_name ) unless @dryrun
+    def create_github_repo_if_not_exists( conf, github_repo_name )
+        Github.create_repository( conf, github_repo_name ) unless @dryrun
     end
 
 
     def set_origin_url( conf, repo, local_repo_path, github_repo_name )
 
         github_url_head = "https://#{conf.github_username}:"
-        github_url_tail = "@github.com/#{conf.github_username}/#{github_repo_name}.git"
+        github_url_tail = "@github.com/#{conf.github_organization}/#{github_repo_name}.git"
         puts "Github Origin Url =>> #{github_url_head}<GITHUB_ACCESS_TOKEN>#{github_url_tail}"
         GitApi.set_push_origin_url( local_repo_path, "#{github_url_head}#{conf.github_access_token}#{github_url_tail}" )
 

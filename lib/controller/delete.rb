@@ -19,7 +19,7 @@ module Migrate
 
         local_repo_path = "#{conf.cache_backup_dir}/#{repo[:github_prefix]}.#{repo[:repository_name]}"
         github_repository_name = "#{repo[:github_prefix]}#{conf.github_separator}#{repo[:repository_name]}"
-        github_qualified_rname = "#{conf.github_username}/#{github_repository_name}"
+        github_qualified_rname = "#{conf.github_organization}/#{github_repository_name}"
 
         repo_exists = Github.repository_exists?( conf.github_access_token, github_qualified_rname )
 

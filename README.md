@@ -51,6 +51,8 @@ bitbucket.port=7999       # which port should the cloning use
 github.username=mygithubusername
 github.access.token=abcdef0123456789fedcba987654321
 github.separator=-
+github.organization=<ORGANIZATION_ID_STRING>
+github.team.id=<TEAM_ID_INTEGER>
 
 [spreadsheet]
 sheet.filepath=data/team-repo-migration-data.xlsx
@@ -61,6 +63,15 @@ sheet.column.github.prefix="Github Repo Prefix"
 
 The filepath for the spreadsheet is relative to the home directory of the executing user.
 
+
+### How to Find the Team ID
+
+Use these API calls to retrieve the Github Team ID integer. The best way to find the team is to use the slugs and remember that teams form a hierarchy.
+
+```
+curl -H "Authorization: token <GITHUB_ACCESS_TOKEN>" https://api.github.com/orgs/<ORGANIZATION_ID_STRING>/teams
+curl -H "Authorization: token <GITHUB_ACCESS_TOKEN>" https://api.github.com/orgs/<ORGANIZATION_ID_STRING>/teams/<TEAM_SLUG>
+```
 
 
 ---
@@ -114,7 +125,7 @@ You are ready once you have a kubernetes cluster and you have satisfied the scri
 kubectl create secret generic migration-config --from-file=migrate-configuration.ini
 kubectl create secret generic migration-sheetkey --from-file=spreadsheet=team-repo-migration-data.xlsx --from-file=ssh-key=bitbucket-private-key.pem
 kubectl create secret generic migration-sshconfig --from-file=sshconfigkey=config
-kubectl create -f kubernetes-job.yml
+kubectl create -f kubernetes-job-do.yml
 ```
 
 
@@ -123,17 +134,24 @@ kubectl create -f kubernetes-job.yml
 
 
 
-## Step 5 | Run the Workload as a Kubernetes Job
+## Step 5 | View the Logs then Delete the Repositories
 
-Don't worry about the logs. Kubernetes keeps the pod alive so we can retrieve the logs like this.
+Kubernetes keeps the pod alive so we can retrieve the logs until we delete the job. Optionally you can also delete the migrated repositories (the backups will be inside the pod).
 
 ```
-kubectl logs -f job/migration-job
+kubectl logs -f job/migration-job-do
 ```
 
 Also visit the Github interface and assess the quality and quantity of the repository migration.
 
+### Delete the Github Repositories
 
+You delete the destination Github repositories in order to rinse and repeat. The deletion script only removes the repositories it finds - it skips the deletion if the destination repository does not exist.
+
+```
+kubectl create -f kubernetes-job-delete.yml
+kubectl logs -f job/migration-job-delete
+```
 
 ---
 
@@ -144,17 +162,19 @@ Also visit the Github interface and assess the quality and quantity of the repos
 These commands will come in handy at some point.
 
 ```
-kubectl describe job/migration-job
-kubectl describe secret/migration-spreadsheet
-kubectl describe secret/migration-config
+kubectl describe job/migration-job-do
+kubectl describe job/migration-job-delete
+kubectl describe secret/migration-sheetkey
+kubectl describe secret/migration-sshconfig
 kubectl describe secret migration-sshfiles
 kubectl get jobs -o wide
 kubectl get secrets
 kubectl get pods -o wide
-kubectl delete job migration-job
+kubectl delete job migration-job-do
+kubectl delete job migration-job-delete
 kubectl delete secret migration-config
-kubectl delete secret migration-spreadsheet
-kubectl delete secret migration-sshfiles
+kubectl delete secret migration-sheetkey
+kubectl delete secret migration-sshconfig
 ```
 
 

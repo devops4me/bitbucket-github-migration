@@ -1,13 +1,13 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-    name: migration-job
+    name: migration-job-do
 spec:
     backoffLimit: 0
     template:
         metadata:
             labels:
-                app: migration-job
+                app: migration-job-do
         spec:
             restartPolicy: Never
             containers:

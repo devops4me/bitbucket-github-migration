@@ -14,7 +14,7 @@ module Migrate
     MIGRATION_CONFIGURATION_FILE="MIGRATION_CONFIGURATION_FILE"
 
     attr_reader :bitbucket_host, :bitbucket_port
-    attr_reader :github_separator, :github_access_token, :github_username
+    attr_reader :github_separator, :github_access_token, :github_username, :github_organization, :github_team_id
     attr_reader :repositories
 
     attr_reader :cache_mirror_dir, :cache_backup_dir
@@ -48,6 +48,8 @@ module Migrate
       @github_separator = @config_data.get( "github.separator" )
       @github_username = @config_data.get( "github.username" )
       @github_access_token = @config_data.get( "github.access.token" )
+      @github_organization = @config_data.get( "github.organization" )
+      @github_team_id = @config_data.get( "github.team.id" )
 
       @config_data.use( "spreadsheet" )
       @sheet_filepath = @config_data.get( "sheet.filepath" )

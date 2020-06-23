@@ -22,12 +22,12 @@ module Migrate
         # Create a github git repository when given an access token and the
         # required repository name.
         #
-        # @param github_access_token [String] hexadecimal github access token
+        # @param conf [Map] map of configuration values
         # @param repository_name [String] name of the non-existent repository to create
         # @return [String] name of the github user
-        def self.create_repository( github_access_token, repository_name )
+        def self.create_repository( conf, repository_name )
 
-            github_client = Octokit::Client.new( :access_token => github_access_token )
+            github_client = Octokit::Client.new( :access_token => conf.github_access_token )
             github_user = github_client.user
             repo_creator = "#{ENV[ "USER" ]}@#{Socket.gethostname()}"
             repo_description = "This github repository was auto-created by a migration script on behalf of #{repo_creator} on #{TimeStamp.readable()}."
@@ -39,6 +39,8 @@ module Migrate
             puts "Account Owner    =>  #{github_user[:name]}"
             puts "Github User ID   =>  #{github_user[:id]}"
             puts "Github Username  =>  #{github_user[:login]}"
+            puts "Github Org Name  =>  #{conf.github_organization}"
+            puts "Github Team Id   =>  #{conf.github_team_id}"
 
             puts "Creation Entity  =>  #{repo_creator}"
             puts "Repo Descriptor  =>  #{repo_description}"
@@ -49,6 +51,8 @@ module Migrate
               {
                 :description => repo_description,
                 :repo_homepage => repo_homepage,
+                :organization => conf.github_organization,
+                :team_id => conf.github_team_id,
                 :private => true,
                 :has_issues => false,
                 :has_wiki => false,
