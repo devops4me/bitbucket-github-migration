@@ -187,36 +187,29 @@ kubectl delete secret migration-sshconfig
 
 Aside from a local development environment and a kubernetes workload we can also use docker to guarantee a consistent script environment for the migration.
 
-## **`docker build`**
-
-Issue this docker build command either locally or within a continuous integration pipeline environment.
-
-```
-docker build       \
-    --no-cache     \
-    --rm           \
-    --tag img.migration \
-    .
-```
-
-Verify with **`docker image ls`** that you have the img.migration docker image listed.
-
 ## **`docker run`**
 
-In order for the docker run to succeed ensure that you have
+In order for the docker run to succeed you must ensure that you have mapped the 4 files from their local location to their expected path inside the docker machine.
 
-- entered your hexadecimal **`GITHUB_ACCESS_TOKEN`** environment variable value
-- selected the configuration file via **`MIGRATION_CONFIGURATION_FILE`** environment variable value
-- configured the bitbucket ssh connection as explained below
-- switched on a VPN if required to connect to the BitBucket server.
+### To Run the Migration
 
 ```
 docker run \
-    --rm \
-    --network host \
-    --name vm.migration \
-    --env GITHUB_ACCESS_TOKEN=1234567890abcdef1234567890abcdef \
-    --env MIGRATION_CONFIGURATION_FILE=migrate-configuration.ini \
-    --volume ~/.ssh:/root/.ssh \
-    img.migration
+  --volume $HOME/path/to/migrate-configuration.ini:/var/opt/migrator/configuration/migrate-configuration.ini \
+  --volume $HOME/path/to/team-repo-migration-data.xlsx:/var/opt/migrator/data/team-repo-migration-data.xlsx \
+  --volume $HOME/path/to/config:/var/opt/migrator/.ssh/config \
+  --volume $HOME/path/to/bitbucket-private-key.pem:/var/opt/migrator/data/bitbucket-private-key.pem \
+  devops4me/migrator do
+```
+
+
+### To Delete the Migrated Repositories
+
+```
+docker run \
+  --volume $HOME/path/to/migrate-configuration.ini:/var/opt/migrator/configuration/migrate-configuration.ini \
+  --volume $HOME/path/to/team-repo-migration-data.xlsx:/var/opt/migrator/data/team-repo-migration-data.xlsx \
+  --volume $HOME/path/to/config:/var/opt/migrator/.ssh/config \
+  --volume $HOME/path/to/bitbucket-private-key.pem:/var/opt/migrator/data/bitbucket-private-key.pem \
+  devops4me/migrator delete
 ```

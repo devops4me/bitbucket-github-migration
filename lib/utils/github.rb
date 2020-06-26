@@ -30,7 +30,7 @@ module Migrate
             github_client = Octokit::Client.new( :access_token => conf.github_access_token )
             github_user = github_client.user
             repo_creator = "#{ENV[ "USER" ]}@#{Socket.gethostname()}"
-            repo_description = "This github repository was auto-created by a migration script on behalf of #{repo_creator} on #{TimeStamp.readable()}."
+            repo_description = "This github repository was auto-created by a migration script on #{TimeStamp.readable()}."
             repo_homepage = "https://github.com"
 
             puts ""
@@ -52,13 +52,17 @@ module Migrate
                 :description => repo_description,
                 :repo_homepage => repo_homepage,
                 :organization => conf.github_organization,
-                :team_id => conf.github_team_id,
+#######                :visibility => "internal",
                 :private => true,
                 :has_issues => false,
                 :has_wiki => false,
                 :has_downloads => false,
                 :auto_init => false
               }
+
+            # Only add the team ID to the options hash if it is provided
+            team_id_nil_or_empty = conf.github_team_id.nil? || conf.github_team_id.to_s.chomp.strip.empty?
+            options_hash[ :team_id ] = conf.github_team_id unless team_id_nil_or_empty
 
             github_client.create_repository( repository_name, options_hash  )
             return github_user[:login]

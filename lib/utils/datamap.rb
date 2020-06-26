@@ -89,6 +89,10 @@ module Migrate
       rawvalue = the_data[section_name][key_name]
       key_val_msg = "Nil empty or whitespace value for key [#{section_name}][#{key_name}]"
       nil_empty_or_whitespace = rawvalue.nil? || rawvalue.to_s.chomp.strip.empty?
+      # Return an empty string if the key has no material value
+      return "" if nil_empty_or_whitespace
+
+      # this error will never be raised now as the method will have finished
       raise ArgumentError, key_val_msg if nil_empty_or_whitespace
 
       return rawvalue.to_s.chomp.strip
