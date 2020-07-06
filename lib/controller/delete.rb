@@ -17,8 +17,14 @@ module Migrate
 
       conf.repositories.each do |repo|
 
-        local_repo_path = "#{conf.cache_backup_dir}/#{repo[:github_prefix]}.#{repo[:repository_name]}"
-        github_repository_name = "#{repo[:github_prefix]}#{conf.github_separator}#{repo[:repository_name]}"
+        no_absolute_name = repo[:github_repo_name].nil?() || repo[:github_repo_name].strip().empty?()
+        local_repo_name = "#{repo[:github_prefix]}.#{repo[:repository_name]}" if no_absolute_name
+        local_repo_name = repo[:github_repo_name].strip() unless no_absolute_name
+        local_repo_path = "#{conf.cache_backup_dir}/#{local_repo_name}"
+
+        github_separated_name = "#{repo[:github_prefix]}#{conf.github_separator}#{repo[:repository_name]}"
+        github_repository_name = github_separated_name.downcase if no_absolute_name
+        github_repository_name = repo[:github_repo_name].strip() unless no_absolute_name
         github_qualified_rname = "#{conf.github_organization}/#{github_repository_name}"
 
         repo_exists = Github.repository_exists?( conf.github_access_token, github_qualified_rname )

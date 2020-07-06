@@ -59,9 +59,21 @@ sheet.filepath=data/team-repo-migration-data.xlsx
 sheet.column.repository.name="Repository Name"
 sheet.column.bitbucket.project="BitBucket Project Name"
 sheet.column.github.prefix="Github Repo Prefix"
+sheet.column.github.repo.name="Github Repo Name"
 ```
 
 The filepath for the spreadsheet is relative to the home directory of the executing user.
+
+### Optional | Github Repository Name
+
+**What if you want a specific Github repository name rather than being constrained to the prefix plus the bitbucket repository name?**
+
+```
+sheet.column.github.repo.name="Github Repo Name"
+```
+
+If you provide the above optional configuration and then create an appropriate column in the spreadsheet, then you can dictate the exact github repository name. This is useful when you want a specific naming convention, or when the bitbucket repository name contains spaces, or when you have capital letters in the source repository name and you want the destination to provide lowercase letters.
+
 
 
 ### How to Find the Team ID

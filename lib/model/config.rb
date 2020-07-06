@@ -56,6 +56,7 @@ module Migrate
       @sheet_repo_name_column = @config_data.get( "sheet.column.repository.name" )
       @sheet_bitbucket_project_name_column = @config_data.get( "sheet.column.bitbucket.project" )
       @sheet_github_prefix_column = @config_data.get( "sheet.column.github.prefix" )
+      @sheet_github_repo_name_column = @config_data.get( "sheet.column.github.repo.name" )
 
       read_spreadsheet_data()
 
@@ -169,6 +170,7 @@ module Migrate
     # - the repository name
     # - the repository bitbucket project
     # - the github prefix
+    # - the github repository name
     #
     # @raise ArgumentError if the spreadsheet does not exist at the specified
     #     path or the data inside it is inconsistent.
@@ -177,10 +179,18 @@ module Migrate
       raise ArgumentError.new( "No repository name column configured." ) if @sheet_repo_name_column.nil?
       raise ArgumentError.new( "No bitbucket project name column configured." ) if @sheet_bitbucket_project_name_column.nil?
       raise ArgumentError.new( "No github prefix column configured." ) if @sheet_github_prefix_column.nil?
+      raise ArgumentError.new( "No possibly empty github repo name configured." ) if @sheet_github_repo_name_column.nil?
 
       @repositories = Array.new
       skip_first = true
-      spreadsheet.each( bitbucket_project: @sheet_bitbucket_project_name_column, repository_name: @sheet_repo_name_column, github_prefix: @sheet_github_prefix_column ) do | repository |
+      spreadsheet.each
+      (
+        bitbucket_project: @sheet_bitbucket_project_name_column,
+        repository_name: @sheet_repo_name_column,
+        github_prefix: @sheet_github_prefix_column,
+        github_repo_name: @sheet_github_repo_name_column
+      ) do | repository |
+
         @repositories.push( repository ) unless skip_first
         skip_first = false
       end

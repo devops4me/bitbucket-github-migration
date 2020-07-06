@@ -31,10 +31,20 @@ module Migrate
 
       conf.repositories.each do |repo|
 
-        local_repo_path = "#{clone_dir_path}/#{repo[:github_prefix]}.#{repo[:repository_name]}"
-        github_repository_name = "#{repo[:github_prefix]}#{conf.github_separator}#{repo[:repository_name]}"
+        no_absolute_name = repo[:github_repo_name].nil?() || repo[:github_repo_name].strip().empty?()
+        src_name_has_spaces = repo[:repository_name].include?(' ')
+        repo_name_needed = no_absolute_name && src_name_has_spaces
+        raise ArgumentError.new( "Give a Github Repo Name when Bitbucket name has spaces." ) if repo_name_needed
 
-        clone_repository( conf, repo, local_repo_path )
+        local_repo_name = "#{repo[:github_prefix]}.#{repo[:repository_name]}" if no_absolute_name
+        local_repo_name = repo[:github_repo_name].strip() unless no_absolute_name
+        local_repo_path = "#{clone_dir_path}/#{local_repo_name}"
+
+        github_separated_name = "#{repo[:github_prefix]}#{conf.github_separator}#{repo[:repository_name]}"
+        github_repository_name = github_separated_name.downcase if no_absolute_name
+        github_repository_name = repo[:github_repo_name].strip() unless no_absolute_name
+
+        clone_repository( conf, repo, local_repo_path, github_repository_name )
         create_github_repo_if_not_exists( conf, github_repository_name )
         set_origin_url( conf, repo, local_repo_path, github_repository_name )
         push_to_remote_origin( local_repo_path )
@@ -49,12 +59,12 @@ module Migrate
     private
 
 
-    def clone_repository( conf, repo, local_repo_path )
+    def clone_repository( conf, repo, local_repo_path, destination_repo_name )
 
         puts ""
         puts "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
         puts "@@@@ From BitBucket =>> #{repo[:bitbucket_project]}/#{repo[:repository_name]}"
-        puts "@@@@ To Github      =>> #{repo[:github_prefix]}#{conf.github_separator}#{repo[:repository_name]}"
+        puts "@@@@ To Github      =>> #{destination_repo_name}"
         puts "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
 
         basic_clone_cmd = "git clone --mirror ssh://git@#{conf.bitbucket_host}:#{conf.bitbucket_port}/#{repo[:bitbucket_project]}/"
@@ -64,7 +74,7 @@ module Migrate
 
         clone_output = %x[#{clone_cmd}];
         puts clone_output
-        puts "Finished cloning #{repo[:github_prefix]}.#{repo[:repository_name]} at #{Migrate::TimeStamp.readable()}."
+        puts "Finished cloning #{destination_repo_name} at #{Migrate::TimeStamp.readable()}."
 
     end
 
