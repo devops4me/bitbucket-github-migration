@@ -52,7 +52,6 @@ module Migrate
                 :description => repo_description,
                 :repo_homepage => repo_homepage,
                 :organization => conf.github_organization,
-#######                :visibility => "internal",
                 :private => true,
                 :has_issues => false,
                 :has_wiki => false,
