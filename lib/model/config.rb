@@ -183,8 +183,7 @@ module Migrate
 
       @repositories = Array.new
       skip_first = true
-      spreadsheet.each
-      (
+      spreadsheet.each(
         bitbucket_project: @sheet_bitbucket_project_name_column,
         repository_name: @sheet_repo_name_column,
         github_prefix: @sheet_github_prefix_column,
