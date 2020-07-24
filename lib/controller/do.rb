@@ -80,7 +80,7 @@ module Migrate
 
 
     def create_github_repo_if_not_exists( conf, github_repo_name )
-        Github.create_repository( conf, github_repo_name ) unless @dryrun
+        Github.create_repository_with_curl( conf, github_repo_name ) unless @dryrun
     end
 
 
