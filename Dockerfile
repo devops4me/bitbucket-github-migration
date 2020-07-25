@@ -61,6 +61,7 @@ RUN chown -R migrator:migrator ~/.ssh
 # --->
 # ---> Configure the git installation.
 # --->
+# ---> Change
 
 RUN git config --global user.email "apolloakora@gmail.com" && \
     git config --global user.name "Apollo Akora"
