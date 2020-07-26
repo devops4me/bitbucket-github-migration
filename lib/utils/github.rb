@@ -163,23 +163,20 @@ module Migrate
             team_id_nil_or_empty = conf.github_team_id.nil? || conf.github_team_id.to_s.chomp.strip.empty?
             options_hash[ :team_id ] = conf.github_team_id unless team_id_nil_or_empty
 
-curl_cmd = "curl -H \"Accept: application/vnd.github.nebula-preview+json\" -H \"Authorization: token #{conf.github_access_token}\" -d \'{\"name\": \"#{repository_name}\", \"owner\": \"#{conf.github_organization}\", \"description\": \"#{repo_description}\", \"visibility\":\"internal\"}\' -X POST \"https://api.github.com/orgs/#{conf.github_organization}/repos\""
+            curl_cmd = "curl -H \"Accept: application/vnd.github.nebula-preview+json\" -H \"Authorization: token #{conf.github_access_token}\" -d \'{\"name\": \"#{repository_name}\", \"owner\": \"#{conf.github_organization}\", \"description\": \"#{repo_description}\", \"visibility\":\"internal\"}\' -X POST \"https://api.github.com/orgs/#{conf.github_organization}/repos\""
 
-## with team id
-## curl_cmd = "curl -H "Accept: application/vnd.github.nebula-preview+json" -H \"Authorization: token #{conf.github_access_token}\" -d \'{\"name\": \"#{repository_name}\", \"owner\": \"#{conf.github_organization}\", \"team_id\": \"#{conf.github_team_id}\", \"description\": \"#{repo_description}\", \"visibility\":\"internal\"}\' -X POST \"https://api.github.com/orgs/#{conf.github_organization}/repos\""
 
-##curl -s -H "Content-Type:application/json" -H "Authorization: token v1.58dba9f897463cd86406ad05d4fe7bc8d1a986fe" -H "Accept: application/vnd.github.nebula-preview+json" -X POST 'https://api.github.com/orgs/Ahold-Delhaize-Sandbox/repos' -d $json
- 
+            printable_curl_cmd = curl_cmd.gsub( conf.github_access_token, "GITHUB_ACCESS_TOKEN" )
 
-#puts ""
-#puts "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-#puts curl_cmd
-#puts "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-#puts ""
+            puts ""
+            puts "======================================================="
+            puts "=== Repository Creation Command"
+            puts "======================================================="
+            puts printable_curl_cmd
+            puts "======================================================="
+            puts ""
 
             %x[#{curl_cmd}];
-
-####            return github_user[:login]
 
         end
 
