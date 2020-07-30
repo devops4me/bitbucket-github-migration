@@ -147,24 +147,13 @@ module Migrate
             puts "Repo Homepage    =>  #{repo_homepage}"
             puts ""
 
-            options_hash =
-              {
-                :description => repo_description,
-                :repo_homepage => repo_homepage,
-                :organization => conf.github_organization,
-                :private => true,
-                :has_issues => false,
-                :has_wiki => false,
-                :has_downloads => false,
-                :auto_init => false
-              }
-
-            # Only add the team ID to the options hash if it is provided
+            # Only add the team ID to the curl command if it has been provided
             team_id_nil_or_empty = conf.github_team_id.nil? || conf.github_team_id.to_s.chomp.strip.empty?
-            options_hash[ :team_id ] = conf.github_team_id unless team_id_nil_or_empty
 
-            curl_cmd = "curl -H \"Accept: application/vnd.github.nebula-preview+json\" -H \"Authorization: token #{conf.github_access_token}\" -d \'{\"name\": \"#{repository_name}\", \"owner\": \"#{conf.github_organization}\", \"description\": \"#{repo_description}\", \"visibility\":\"internal\"}\' -X POST \"https://api.github.com/orgs/#{conf.github_organization}/repos\""
+            team_id_insert = "" if team_id_nil_or_empty
+            team_id_insert = " \"team_id\": #{conf.github_team_id}," unless team_id_nil_or_empty
 
+            curl_cmd = "curl -H \"Accept: application/vnd.github.nebula-preview+json\" -H \"Authorization: token #{conf.github_access_token}\" -d \'{\"name\": \"#{repository_name}\", \"owner\": \"#{conf.github_organization}\",#{team_id_insert} \"description\": \"#{repo_description}\", \"visibility\":\"internal\"}\' -X POST \"https://api.github.com/orgs/#{conf.github_organization}/repos\""
 
             printable_curl_cmd = curl_cmd.gsub( conf.github_access_token, "GITHUB_ACCESS_TOKEN" )
 
