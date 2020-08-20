@@ -67,7 +67,7 @@ module Migrate
         puts "@@@@ To Github      =>> #{destination_repo_name}"
         puts "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
 
-        basic_clone_cmd = "git clone --mirror ssh://git@#{conf.bitbucket_host}:#{conf.bitbucket_port}/#{repo[:bitbucket_project]}/"
+        basic_clone_cmd = "git clone --mirror --single-branch --branch Standardization ssh://git@#{conf.bitbucket_host}:#{conf.bitbucket_port}/#{repo[:bitbucket_project]}/"
         clone_cmd = "#{basic_clone_cmd}#{repo[:repository_name]}.git #{local_repo_path}"
         puts "Local Repo Path =>> #{local_repo_path}"
         puts clone_cmd
